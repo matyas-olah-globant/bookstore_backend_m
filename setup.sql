@@ -7,9 +7,9 @@ CREATE TABLE IF NOT EXISTS genres (
     genre TEXT NOT NULL
 );
 
-INSERT INTO genres (id, genre) VALUES (1, 'Adventure');
-INSERT INTO genres (id, genre) VALUES (2, 'Classics');
-INSERT INTO genres (id, genre) VALUES (3, 'Fantasy');
+INSERT IGNORE INTO genres (id, genre) VALUES (1, 'Adventure');
+INSERT IGNORE INTO genres (id, genre) VALUES (2, 'Classics');
+INSERT IGNORE INTO genres (id, genre) VALUES (3, 'Fantasy');
 
 CREATE TABLE IF NOT EXISTS books (
     id INT PRIMARY KEY AUTO_INCREMENT,

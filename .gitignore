@@ -11,5 +11,8 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
+# Code and other stuff that should not be committed goes here
+backup.txt
+
 # Dependency directories (remove the comment below to include it)
 # vendor/
