@@ -11,9 +11,11 @@ INSERT IGNORE INTO genres (id, genre) VALUES (1, 'Adventure');
 INSERT IGNORE INTO genres (id, genre) VALUES (2, 'Classics');
 INSERT IGNORE INTO genres (id, genre) VALUES (3, 'Fantasy');
 
-CREATE TABLE IF NOT EXISTS books (
+DROP TABLE IF EXISTS books;
+
+CREATE TABLE books (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    name TEXT NOT NULL, -- title
+    name TEXT NOT NULL, -- book title
     price DOUBLE NOT NULL,
     genre_id INT NOT NULL,
     amount INT NOT NULL,

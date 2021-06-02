@@ -1,0 +1,38 @@
+[
+    {
+        "name": "The Three Musketeers",
+        "price": 10.44,
+        "genre": 1,
+        "amount": 5
+    },
+    {
+        "name": "The Little Prince",
+        "price": 6.7,
+        "genre": 2,
+        "amount": 4
+    },
+    {
+        "name": "Maze Runner",
+        "price": 19.97,
+        "genre": 3,
+        "amount": 2
+    },
+    {
+        "name": "Greek Dramas",
+        "price": 12.34,
+        "genre": 2,
+        "amount": 19
+    },
+    {
+        "name": "Don Quijote",
+        "price": 11.24,
+        "genre": 1,
+        "amount": 7
+    },
+    {
+        "name": "Dekameron",
+        "price": 8.87,
+        "genre": 2,
+        "amount": 0
+    }
+]
