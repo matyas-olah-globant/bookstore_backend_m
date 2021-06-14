@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"strconv"
 	"strings"
 
@@ -18,17 +17,19 @@ import (
 // DB related stuff
 var settings mysql.ConnectionURL
 var sess db.Session
+var err error
 
 func setupDB(sqlFilename string, jsonFilename string) {
 	// Set logging level to DEBUG
 	// db.LC().SetLevel(db.LogLevelDebug)
 
 	// Set up the database
+	for sess, err = mysql.Open(settings); err != nil; {
+		sess, err = mysql.Open(settings)
+	}
 	sqlBytes, err := ioutil.ReadFile(sqlFilename)
 	check(err)
 	setupScript := string(sqlBytes)
-	sess, err = mysql.Open(settings)
-	check(err)
 	commands := strings.Split(setupScript, ";")
 	for _, v := range commands {
 		s := strings.TrimSpace(v)
@@ -49,7 +50,6 @@ func setupDB(sqlFilename string, jsonFilename string) {
 }
 
 // connection related stuff
-var port int
 var myRouter *mux.Router
 
 func handleRequests() {
@@ -61,7 +61,7 @@ func handleRequests() {
 	myRouter.HandleFunc("/book/{id}", putBook).Methods("PUT")       // Update
 	myRouter.HandleFunc("/book/{id}", deleteBook).Methods("DELETE") // Delete
 	myRouter.HandleFunc("/book/{id}", getBook)                      // Read
-	log.Fatal(http.ListenAndServe(":"+strconv.Itoa(port), myRouter))
+	log.Fatal(http.ListenAndServe(":1151", myRouter))
 }
 
 func homePage(w http.ResponseWriter, r *http.Request) {
@@ -70,15 +70,15 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 		"\n"+
 		"Available endpoints:\n"+
 		"\tGET    /genres      - get the available genres\n"+
-		"\tGET    /books       - get all books.\n"+
-		"\t\tThe following filters can can be sent in the query string:\n"+
+		"\tGET    /books       - get all books\n"+
+		"\t\tThe following filters can can be sent in the query string, optionally:\n"+
 		"\t\t\tname - strictly match a book's name\n"+
 		"\t\t\tminPrice, maxPrice - a price range, inclusively\n"+
 		"\t\t\tgenre - a genre's ID\n"+
 		"\tPOST   /book        - save a book submitted in the request body, the book ID is generated\n"+
-		"\tPUT    /book/{id} - update a book identified by its ID"+
-		"\tDELETE /book/{id} - delete a book by its ID\n"+
-		"\tGET    /book/{id}   - get a book by its id\n")
+		"\tPUT    /book/{id}   - update a book identified by its ID\n"+
+		"\tDELETE /book/{id}   - delete a book by its ID\n"+
+		"\tGET    /book/{id}   - get a book by its ID\n")
 }
 
 func getGenres(w http.ResponseWriter, r *http.Request) {
@@ -286,6 +286,8 @@ func getBook(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+var genres []Genre = nil
+
 type Genre struct {
 	ID        uint   `db:"id" json:"id"`
 	GenreName string `db:"genre" json:"genre"`
@@ -299,45 +301,22 @@ type Book struct {
 	Amount  uint    `db:"amount" json:"amount"`
 }
 
-var genres []Genre = nil
-
-var args []string
-
-func checkArgs() error {
-	if 2 > len(args) {
-		return fmt.Errorf("too few arguments: %d", len(args))
-	}
-	var err error = nil
-	if len(args) == 3 {
-		port, err = strconv.Atoi(args[2])
-		check(err)
-	} else {
-		port = 1151
-	}
-	return err
-}
-
 func check(e error) {
 	if e != nil {
+		fmt.Println("Error:", e.Error())
 		log.Fatal(e)
 		panic(e)
 	}
 }
 
-// go run main.go dbPassword [port]
 func main() {
-	args = os.Args
-	check(checkArgs())
 	settings = mysql.ConnectionURL{
 		User:     `root`,
-		Password: args[1],
+		Password: `jelszavam`,
 		Database: `bookstore`,
-		Host:     `localhost`,
+		Host:     `db-bookstore`,
 	}
 	setupDB("setup.sql", "books.json")
-	for _, arg := range args {
-		fmt.Println(arg)
-	}
 	handleRequests()
 	defer sess.Close()
 }

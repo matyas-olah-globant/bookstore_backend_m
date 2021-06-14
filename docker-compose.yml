@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql
+    container_name: db-bookstore
+    hostname: db-bookstore
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: jelszavam
+      MYSQL_DATABASE: bookstore
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    networks:
+      - bookstore_network
+  web:
+    build: .
+    container_name: bookstore-backend
+    working_dir: /app
+    command: go run main.go
+    ports:
+      - "1151:1151" # http
+    depends_on:
+      - db
+    links:
+      - db
+    networks:
+      - bookstore_network
+
+networks:
+  bookstore_network:
+    driver: bridge

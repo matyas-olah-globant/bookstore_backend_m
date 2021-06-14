@@ -2,17 +2,15 @@ CREATE DATABASE IF NOT EXISTS bookstore;
 
 USE bookstore;
 
+-- genres
 CREATE TABLE IF NOT EXISTS genres (
     id INT NOT NULL PRIMARY KEY,
     genre TEXT NOT NULL
 );
+INSERT IGNORE INTO genres VALUES (1, 'Adventure'), (2, 'Classics'), (3, 'Fantasy');
 
-INSERT IGNORE INTO genres (id, genre) VALUES (1, 'Adventure');
-INSERT IGNORE INTO genres (id, genre) VALUES (2, 'Classics');
-INSERT IGNORE INTO genres (id, genre) VALUES (3, 'Fantasy');
-
+-- books
 DROP TABLE IF EXISTS books;
-
 CREATE TABLE books (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name TEXT NOT NULL, -- book title
